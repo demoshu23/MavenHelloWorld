@@ -1,0 +1,30 @@
+name: Cleanup Stale Branches
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # This schedule runs the workflow at midnight every day
+
+jobs:
+  cleanup-stale-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup Stale Branches
+        uses: cbrgm/cleanup-stale-branches-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          ignore-branches: "master,develop, release"
+          # ignored-prefixes: "feature/,bugfix/"
+          last-commit-age-days: 90
+          dry-run: true ## To run workflow set the flag to false
+          rate-limit: true
+
+        
+
+# action is scheduled to run daily.
+#It ignores the branch foobar and branches starting with release-.
+#Branches prefixed with feature/ or bugfix/ are not considered for deletion.
+#Branches with no commits in the last 60 days are eligible for deletion.
+#The action is not in dry-run mode, meaning branches will actually be deleted.
+#The rate-limit check is enabled to prevent exceeding the GitHub API rate limit.
